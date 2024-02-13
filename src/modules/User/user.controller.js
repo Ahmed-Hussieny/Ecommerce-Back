@@ -42,20 +42,35 @@ export const deleteProfile = async (req, res, next) => {
     const {_id} = req.authUser; 
 
         // Find the user by ID
-        const user = await userModel.findById(_id);
+        const user = await userModel.findByIdAndDelete(_id);
         if (!user) {
             return next(new Error('User not found', { cause: 404 }));
         }
-
-        // Perform any additional authorization checks if necessary
-        // For example, check if the user has permission to delete their profile
-
-        // Delete the user
-        await user.remove();
-
         res.status(200).json({
             success: true,
             message: 'User profile deleted successfully',
         });
   
+};
+
+// ========================================= Get User Profile API ================================//
+
+/**
+ * Get the profile data of the user
+ */
+export const getUserProfile = async (req, res, next) => {
+   
+        const {_id} = req.authUser; 
+        // Find the user by ID
+        const user = await userModel.findById(_id);
+        if (!user) {
+            return next(new Error('User not found', { cause: 404 }));
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'User profile data retrieved successfully',
+            data: user,
+        });
+
 };

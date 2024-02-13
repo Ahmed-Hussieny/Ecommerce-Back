@@ -9,8 +9,9 @@ const userRouter = Router();
 
 
 userRouter.put('/update-profile',auth(endPointsRoles.NORMALUSER), expressAsyncHandler(userController.updateProfile))
+userRouter.delete('/delete-profile',auth(endPointsRoles.NORMALUSER), expressAsyncHandler(userController.deleteProfile))
 
-
+userRouter.get('/get-profile',auth(endPointsRoles.NORMALUSER), expressAsyncHandler(userController.getUserProfile))
 
 
 

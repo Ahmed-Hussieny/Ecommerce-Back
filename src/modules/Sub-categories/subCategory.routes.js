@@ -9,11 +9,32 @@ import { auth } from "../../middlewares/auth.middleware.js";
 import { allowedExtensions } from "../../utils/allowed-extensions.js";
 
 
-router.post('/:categoryId',
+router.post('/addSubCategory/:categoryId',
     auth(endPointsRoles.ADD_CATEGORY),
     multerMiddleHost({
         extensions: allowedExtensions.image
     }).single('image'),
     expressAsyncHandler(subCategoryController.addSubCategory))
+
+
+    router.put('/updateSubCategory/:subCategoryId',
+    auth(endPointsRoles.ADD_CATEGORY),
+    multerMiddleHost({
+        extensions: allowedExtensions.image
+    }).single('image'),
+    expressAsyncHandler(subCategoryController.updateSubCategory))
+
+
+
+    router.delete('/deleteSubCategory/:subCategoryId',
+    auth(endPointsRoles.ADD_CATEGORY),
+    expressAsyncHandler(subCategoryController.deleteSubCategory))
+
+    router.get('/getSubCategoryWithBrands', 
+    expressAsyncHandler(subCategoryController.getAllsubCategoryWithbrandth))
+
+    
+
+    
 
 export default router;

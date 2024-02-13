@@ -18,4 +18,21 @@ router.post('/',
         extensions: allowedExtensions.image
     }).single('image'),
     expressAsyncHandler(brandController.addBrand))
+
+
+    router.delete('/deletebrand/:brandId',
+    auth(endPointsRoles.ADD_BRAND),
+    expressAsyncHandler(brandController.deletebrand))
+
+    router.put('/updatebrand/:brandId',
+    auth(endPointsRoles.ADD_BRAND),
+    multerMiddleHost({
+        extensions: allowedExtensions.image
+    }).single('image'),
+    expressAsyncHandler(brandController.updateBrand))
+
+
+    router.get('/getallbrands',brandController.getAllBrands)
+
+    
 export default router

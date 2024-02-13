@@ -53,3 +53,90 @@ export const addBrand = async (req, res, next) => {
     })
 
 }
+
+// ======================update brand ================================
+export const updateBrand = async (req, res, next) => {
+
+        // 1- Destructure the required data from the request object
+        const { name } = req.body;
+        const { brandId } = req.params; 
+        const { _id } = req.authUser;
+
+        // 2- Find the brand to update
+        const brand = await Brand.findOne({_id:brandId,addedBy:_id});
+        if (!brand) {
+            return next({ message: 'Brand not found', cause: 404 });
+        }
+
+      
+
+        // 4- Update the brand document
+        if (name) {
+            brand.name = name;
+        }
+
+        // Update image if provided
+        if (req.file) {
+            const { secure_url, public_id } = await cloudinaryConnection().uploader.upload(req.file.path, {
+                folder: `${process.env.MAIN_FOLDER}/Categories/${brand.categoryId.folderId}/SubCategories/${brand.subCategoryId.folderId}/Brands/${brand.folderId}`,
+            });
+
+            // Remove old image from cloudinary if exists
+            if (brand.Image.public_id) {
+                await cloudinaryConnection().uploader.destroy(brand.Image.public_id);
+            }
+
+            brand.Image = { secure_url, public_id };
+        }
+
+        // Save the updated brand
+        const updatedBrand = await brand.save();
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Brand updated successfully',
+            data: updatedBrand
+        });
+   
+}
+
+
+// ====================delete brand ==============================
+
+export const deletebrand =  async (req, res, next) => {
+
+        // Extract brand ID from request parameters
+        const { brandId } = req.params;
+        const {_id} = req.authUser
+
+        // Find the brand by ID
+        const brand = await Brand.findOne({_id:brandId,addedBy:_id});
+        if (!brand) {
+            return next({ message: 'Brand not found', cause: 404 })
+        }
+
+       
+
+        // Remove the brand from the database
+        await Brand.findByIdAndDelete(brandId);
+
+        // Respond with success message
+        res.status(200).json({ success: true, message: 'Brand deleted successfully' });
+
+};
+
+
+
+// ====================get all brands ==============================
+export const getAllBrands = async (req, res, next) => {
+  
+        const brands = await Brand.find();
+        if(!brands)    return next({ message: 'no Brands yet', cause: 404 })
+
+
+        res.status(200).json({
+            status: 'success',
+            data: brands
+        });
+
+}
